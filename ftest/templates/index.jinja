@@ -1,0 +1,70 @@
+<!-- extend base layout -->
+{% extends "base.jinja" %}
+
+{% block content %}
+
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+
+      <th scope="col">Machine/experiment</th>
+      <th scope="col">clone</th>
+      <th scope="col">compilation</th>
+      <th scope="col">mkrun</th>
+      <th scope="col">job submit</th>
+      <th scope="col">Exit status</th>
+      <th scope="col">fcheck</th>
+      <th scope="col">date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for experiment_name, experiment in experiments.items() %}
+    <tr>
+      <th scope="row">{{ experiment_name }}</th>
+
+      {% if experiment.clone.status == 'OK' %}
+                <td class="table-success">{{ experiment.clone.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.clone.status }}</td>
+      {% endif %}
+
+      {% if experiment.build.status == 'OK' %}
+                <td class="table-success">{{ experiment.build.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.build.status }}</td>
+      {% endif %}
+
+      {% if experiment.mkrun.status == 'OK' %}
+                <td class="table-success">{{ experiment.mkrun.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.mkrun.status }}</td>
+      {% endif %}
+
+      {% if experiment.job_submit.status == 'OK' %}
+                <td class="table-success">{{ experiment.job_submit.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.job_submit.status }}</td>
+      {% endif %}
+
+      {% if experiment.exit_status.status == 'COMPLETED' %}
+                <td class="table-success">{{ experiment.exit_status.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.exit_status.status }}</td>
+      {% endif %}
+
+      {% if experiment.fcheck.status == 'OK' %}
+                <td class="table-success">{{ experiment.fcheck.status }}</td>
+            {% else %}
+                <td class="table-danger">{{ experiment.fcheck.status }}</td>
+      {% endif %}
+      <td><a href="./ohtml/{{ experiment_name }}/{{ experiment.date }}.html" class="badge badge-dark">{{ experiment.date }}</a></td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+{% endblock %}
+
+
+

@@ -1,0 +1,135 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+  
+<style type="text/css">
+  .thumbnail{        
+     
+    // or you could use percentage values for responsive layout
+    width : 100%;
+    height: 500px;
+    overflow: auto;
+}
+.thumbnail img{
+    // your styles for the image
+    width: 100%;
+    height: auto;
+    display: block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+
+  <div class="page-header">
+
+  <h1> FESOM2 diagnostics <small> sanity checks</small></h1>
+  </div>
+
+{% block content %}
+
+<h5> date </h5>
+
+{{ date }}
+
+<h5> clone </h5>
+<p class="small" >
+{% for  line in clone['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<br>
+<p class="small text-danger" >
+    {% for  line in clone['stderr'].splitlines() %}
+    {{ line }}
+    <br>
+    {% endfor %}
+</p>
+
+<h5> build </h5>
+<p class="small" >
+{% for  line in build['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+<p class="small text-danger">
+{% for  line in build['stderr'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<h5> mkrun </h5>
+<p class="small" >
+{% for  line in mkrun['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+<p class="small text-danger">
+{% for  line in mkrun['stderr'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<h5> job_submit </h5>
+<p class="small" >
+{% for  line in job_submit['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+<p class="small text-danger">
+{% for  line in job_submit['stderr'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<h5> exit_status </h5>
+<p class="small" >
+{% for  line in exit_status['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<p class="small text-danger">
+{% for  line in exit_status['stderr'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+<h5> fcheck </h5>
+<p class="small" >
+{% for  line in fcheck['stdout'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+<p class="small text-danger">
+{% for  line in fcheck['stderr'].splitlines() %}
+{{ line }}
+<br>
+{% endfor %}
+</p>
+
+
+
+{% endblock %}
+
+</body>
+</html>
