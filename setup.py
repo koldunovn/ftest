@@ -44,7 +44,7 @@ setup(
     name='ftest',
     packages=find_packages(include=['ftest']),
     package_dir={'mypkg': 'ftest'},
-    package_data={'': ['*.yml', '*.jinja',
+    package_data={'': ['*.yml', '*.html',
                        '*.css', '*.map', '*.eot',
                        '*.svg','*.ttf', '*.woff*', '*.js']},
     setup_requires=setup_requirements,

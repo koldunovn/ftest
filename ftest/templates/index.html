@@ -1,5 +1,5 @@
 <!-- extend base layout -->
-{% extends "base.jinja" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -16,6 +16,7 @@
       <th scope="col">Exit status</th>
       <th scope="col">fcheck</th>
       <th scope="col">date</th>
+      <th scope="col">archive</th>
     </tr>
   </thead>
   <tbody>
@@ -59,6 +60,8 @@
                 <td class="table-danger">{{ experiment.fcheck.status }}</td>
       {% endif %}
       <td><a href="./ohtml/{{ experiment_name }}/{{ experiment.date }}.html" class="badge badge-dark">{{ experiment.date }}</a></td>
+      <td><a href="./ohtml/{{ experiment_name }}.html" class="badge badge-info">Archive</a></td>
+
     </tr>
     {% endfor %}
 

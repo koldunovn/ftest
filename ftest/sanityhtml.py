@@ -24,10 +24,6 @@ def sanityhtml():
         help="Output directory",
     )
     args = parser.parse_args()
-# experiment_settings_path = pkg_resources.resource_filename(__name__,
-#                                                     f'settings/{experiment_name}/settings.yml')
-# homedir = os.path.expanduser('~')
-#     machine_settings_path = f'{homedir}/.ftest/machines.yml'
 
     if not os.path.exists(args.ipath):
         raise FileNotFoundError(f'There is no {args.ipath} directory.')
@@ -53,7 +49,7 @@ def sanityhtml():
         cn['experiments'][experiment_name] = test_results
 
     ofile = open('index.html', 'w')
-    template = env.get_template('index.jinja')
+    template = env.get_template('index.html')
     output = template.render(cn)
     ofile.write(output)
     ofile.close()
@@ -66,10 +62,30 @@ def sanityhtml():
         ofilename = date+".html"
         opath = os.path.join(ofolder, ofilename)
         ofile = open(opath, 'w')
-        template = env.get_template('experiment.jinja')
+        template = env.get_template('experiment.html')
         output = template.render(cn['experiments'][experiment_name])
         ofile.write(output)
         ofile.close()
+    
+    for experiment_name in experiment_names:
+        ofolder = f'./ohtml/{experiment_name}/'
+        html_files = glob.glob(f'{ofolder}/*.html')
+        html_files.sort(reverse=True)
+        hfiles = []
+        for hfile in html_files:
+            hfiles.append(os.path.basename(hfile))
+
+        # print(html_files)
+        title = experiment_name
+        opath = f'./ohtml/{experiment_name}.html'
+        ofile = open(opath, 'w')
+        template = env.get_template('archive.html')
+        output = template.render({'title':title, 
+                                  "hfiles":hfiles,
+                                  'experiment':experiment_name})
+        ofile.write(output)
+        ofile.close()
+
 
     if not os.path.exists('./static/'):
         static_path = pkg_resources.resource_filename(__name__,
