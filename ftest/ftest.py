@@ -28,9 +28,19 @@ def read_yml(yml_path):
 
 
 def connect(machine):
-    c = Connection(machine['adress'],
-                   user=machine['user'],
-                   connect_kwargs={"key_filename": machine['ssh']})
+    if 'ssh_key' in machine:
+        if "ssh_pass" in machine:
+            ssh_pass = machine['ssh_pass']
+        else:
+            ssh_pass = None
+        c = Connection(machine['adress'],
+                    user=machine['user'],
+                    connect_kwargs={"key_filename": machine['ssh_key'], "passphrase": ssh_pass})
+    elif "password" in machine:
+        c = Connection(machine['adress'],
+                    user=machine['user'],
+                    connect_kwargs={"password": machine['password']})
+        
     return c
 
 
@@ -160,6 +170,20 @@ def parce_job_submit(stdout):
         jobid = "FAIL"
     return jobid
 
+def get_status_juwels(c, jobid):
+    if jobid == "FAIL":
+        status = "NOT RUN"
+        return status
+
+    result = c.run(f'sacct -j {jobid}', warn=True, hide=True)
+    status = 'UNDEFINED'
+    if result.ok:
+        for line in result.stdout.splitlines():
+            if 'fes_juwel' in line:
+                print(line.split()[-2])
+                status = line.split()[-2]
+
+    return status.strip()
 
 def get_status_mistral(c, jobid):
     if jobid == "FAIL":
@@ -169,16 +193,19 @@ def get_status_mistral(c, jobid):
     result = c.run(f'sacct -j {jobid}', warn=True, hide=True)
     status = 'UNDEFINED'
     if result.ok:
-        lines = []
         for line in result.stdout.splitlines():
             if 'fesom.x' in line:
                 print(line.split()[-2])
                 status = line.split()[-2]
 
-    return status
+    return status.strip()
 
 
 def get_status_ollie(c, jobid):
+    if jobid == "FAIL":
+        status = "NOT RUN"
+        return status
+
     result = c.run('sudo get_my_jobs.sh -d1', warn=True, hide=True)
     status = "UNDEFINED"
     if result.ok:
@@ -190,7 +217,8 @@ def get_status_ollie(c, jobid):
             if 'fesom.x' in line:
                 print(line.split()[-1])
                 status = line.split()[-1]
-    return status
+                
+    return status.strip()
 
 
 def query_status(c, jobid, machine):
@@ -198,6 +226,8 @@ def query_status(c, jobid, machine):
         status = get_status_mistral(c, jobid)
     elif machine['name'] == 'ollie':
         status = get_status_ollie(c, jobid)
+    elif machine['name'] == 'juwels':
+        status = get_status_juwels(c, jobid)
     else:
         print(f'Unsupported machine {machine} for query the job status.')
     return status
@@ -208,13 +238,21 @@ def exit_status(c, test_results, machine, jobid, sleep=10, attempts=10):
     if test_results['latest'] != 'OK':
         test_results = record_no_run(test_results, 'exit_status')
         return test_results
+    
+    if "exit_status_sleep" in machine:
+        sleep = machine['exit_status_sleep']
 
+    if 'exit_status_attempts' in machine:
+        attempts = machine['exit_status_attempts']
+
+    print(f"We will make {attempts} attempts with {sleep} second intervals to get the status.")
     status = "UNDEFINED"
     attempt = 0
 
-    while (status not in finish_codes) or (attempt >= attempts):
+    while (status not in finish_codes) and (attempt <= attempts):
         time.sleep(sleep)
         status = query_status(c, jobid, machine)
+        print(status)
         attempt += 1
 
     test_results["exit_status"] = {}
@@ -324,7 +362,7 @@ def ftest():
     test_results = submit(c, test_results, machine, experiment)
 
     jobid = parce_job_submit(test_results['job_submit']['stdout'])
-
+    
     test_results = exit_status(c,
                             test_results,
                             machine,
