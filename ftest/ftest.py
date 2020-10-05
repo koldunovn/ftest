@@ -15,6 +15,7 @@ from invoke import Responder
 finish_codes = [
     "BOOT_FAIL",
     "CANCELLED",
+    "CANCELLED+",
     "COMPLETED",
     "DEADLINE",
     "FAILED",
@@ -286,7 +287,6 @@ def exit_status(c, test_results, machine, jobid, sleep=10, attempts=10):
     else:
         test_results["latest"] = "FAIL"
 
-    print(status)
     return test_results
 
 

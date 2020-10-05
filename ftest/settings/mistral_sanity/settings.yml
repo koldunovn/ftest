@@ -3,5 +3,5 @@ experiment_name: mistral_sanity
 parent_experiment: test_pi
 machine: mistral
 branch: master
-repo: https://gitlab.dkrz.de/FESOM/fesom2.git
+repo: https://github.com/FESOM/fesom2.git
 tolerance: 0.01
